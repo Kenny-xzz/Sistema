@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Gestão de Usuarios - Criar Conta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #242424, #151515);
+      color: rgb(255, 255, 255);
+    }
+
+    .left {
+      flex: 1;
+      padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #b8a9d9;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #cfc0ea;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #4a3970;
+      background: #1951df;
+      color: white;
+      font-size: 15px;
+    }
+
+    input::placeholder {
+      color: #ffffff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #1a0f33;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e8e0f5;
+    }
+
+    .footer-text {
+      margin-top: 20px;
+      color: #b8a9d9;
+      font-size: 14px;
+    }
+
+    .footer-text a {
+      color: #0d14ef;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .campos-extra {
+      display: none;
+      border-left: 2px solid #4a3970;
+      padding-left: 16px;
+      margin-bottom: 10px;
+    }
+
+    .campos-extra.ativo {
+      display: block;
+    }
+
+    .campos-extra .aviso {
+      font-size: 13px;
+      color: #b8a9d9;
+      margin-bottom: 14px;
+    }
+
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="left">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-circle-user-round-icon lucide-circle-user-round">
+        <path d="M17.925 20.056a6 6 0 0 0-11.851.001" />
+        <circle cx="12" cy="11" r="4" />
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+      Cria um usuario</div>
+
+    <h1>Criar conta</h1>
+    <p class="subtitle">preencha os dados para se registar</p>
+
+    <form action="registo.php" method="POST">
+
+      <label for="tipo">Tipo de conta</label>
+      <select id="tipo" name="tipo" required onchange="mostrarCampos()">
+        <option value="" disabled selected>Selecione uma opção</option>
+        <option value="estudante">Estudante</option>
+        <option value="formador">Formador</option>
+      </select>
+
+      <!-- Campos para ESTUDANTE -->
+      <div class="campos-extra" id="campos-estudante">
+        <label for="nome_estudante">Nome do estudante</label>
+        <input type="text" id="nome_estudante" name="nome_estudante" placeholder="O seu nome" autocomplete="name">
+
+        <label for="email_estudante">Email</label>
+        <input type="email" id="email_estudante" name="email_estudante" placeholder="example.@email.com"
+          autocomplete="email">
+
+        <label for="curso">Curso</label>
+        <input type="text" id="curso" name="curso" placeholder="Ex: Gestão">
+
+        <label for="codigo_estudante">Código do estudante</label>
+        <input type="text" id="codigo_estudante" name="codigo_estudante" placeholder="Ex: 24812">
+
+        <label for="contacto">Contacto</label>
+        <input type="tel" id="contacto" name="contacto" placeholder="Ex: 84 000 0000">
+
+        <label for="password_estudante">Password</label>
+        <input type="password" id="password_estudante" name="password_estudante" placeholder="••••••••"
+          autocomplete="new-password" minlength="6">
+      </div>
+
+      <!-- Campos para FORMADOR -->
+      <div class="campos-extra" id="campos-empresa">
+        <p class="aviso">Contas de Formadores ficam sujeitas a aprovação dos administradores.</p>
+
+        <label for="nome_empresa">Nome do Formador</label>
+        <input type="text" id="nome_empresa" name="nome_empresa" placeholder="Ex: Augusto Novela">
+
+        <label for="nuit">Codigo</label>
+        <input type="text" id="nuit" name="nuit" placeholder="19202">
+
+        <!--
+        <label for="tipo_empresa">Tipo de empresa</label>
+        <input type="text" id="tipo_empresa" name="tipo_empresa" placeholder="Ex: Lda, SA, Pública">
+        -->
+
+        <label for="ramo_atividade">E-mail</label>
+        <input type="text" id="ramo_atividade" name="ramo_atividade" placeholder="Ex: joao.manuel@gmail.com">
+
+        <label for="endereco">Departamento/Área</label>
+        <input type="text" id="endereco" name="endereco" placeholder="Informática">
+
+        <label for="cidade">Cidade</label>
+        <input type="text" id="cidade" name="cidade" placeholder="Ex: Maputo">
+
+        <!---
+        <label for="email_institucional">Email institucional</label>
+        <input type="email" id="email_institucional" name="email_institucional" placeholder="geral@empresa.com"
+          autocomplete="email">
+          -->
+        <label for="telefone">Telefone</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="Ex: 84 000 0000">
+
+        <label for="password_empresa">Password</label>
+        <input type="password" id="password_empresa" name="password_empresa" placeholder="••••••••"
+          autocomplete="new-password" minlength="6">
+      </div>
+
+      <button type="submit">Criar conta</button>
+    </form>
+
+    <p class="footer-text">Já tem conta? <a href="Login.html">Entrar</a></p>
+  </div>
+
+  <div class="right">
+    <!-- espaço para o mesmo logo/imagem grande do Login.html -->
+    <img src="public/css/imagens/LOGO_ITC.png" alt="ITC imagem">
+  </div>
+
+  <script>
+    function mostrarCampos() {
+      const tipo = document.getElementById('tipo').value;
+      const estudante = document.getElementById('campos-estudante');
+      const empresa = document.getElementById('campos-empresa');
+
+      estudante.classList.remove('ativo');
+      empresa.classList.remove('ativo');
+
+      estudante.querySelectorAll('input').forEach(campo => campo.required = false);
+      empresa.querySelectorAll('input').forEach(campo => campo.required = false);
+
+      if (tipo === 'estudante') {
+        estudante.classList.add('ativo');
+        estudante.querySelectorAll('input').forEach(campo => campo.required = true);
+      } else if (tipo === 'formador') {
+        empresa.classList.add('ativo');
+        empresa.querySelectorAll('input').forEach(campo => campo.required = true);
+      }
+    }
+  </script>
+
+</body>
+
+</html>

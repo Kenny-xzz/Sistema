@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Password - ITC</title>
+    <link rel="stylesheet" href="public/css/login.css">
+</head>
+<body>
+
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="Icones_Fotos/clouds.mp4" type="video/mp4">
+    </video>
+
+    <div class="login-container" style="grid-template-columns: 1fr;">
+        <div class="login-form-area">
+            <div class="login-content">
+                <div class="logo-area">
+                    <img src="public/css/imagens/LOGO_ITC.png" alt="Logo">
+                    <h1>Recuperar Password</h1>
+                    <p>Insere o teu email para receberes um link de recuperação</p>
+                </div>
+
+                <form method="POST" action="enviarReset.php">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <div class="input-container">
+                            <input type="email" name="email" required placeholder="o-teu@email.com">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-button">Enviar Link</button>
+                </form>
+
+                <p class="footer-text" style="text-align:center; margin-top:20px;">
+                    Possui uma conta?<a style="color: blue;" href="Login.html">Fazer Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
