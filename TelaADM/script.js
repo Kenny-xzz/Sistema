@@ -113,9 +113,64 @@ function atualizarContadores() {
 }
 
 function listarRequisicoesEManutencoes() {
-    // Listagem estática para manutenção do escopo visual das abas ativas
-    document.getElementById('tabela-requisicoes').innerHTML = '<tr><td>Formador Sebastião Chemane</td><td>Switch 24 portas</td><td>08:00 - 10:30</td><td><span style="color:#0284c7;font-weight:600;">Processado</span></td></tr>';
+    listarRequisicoes();
+
+    // Manutenções continua estática por agora
     document.getElementById('tabela-manutencoes').innerHTML = '<tr><td>ITC-EQ-101</td><td>Troca do projetor </td><td><span class="status-badge manutencao">Em Curso</span></td></tr>';
+}
+
+function listarRequisicoes() {
+    fetch('api.php?buscar=requisicoes').then(res => res.json()).then(dados => {
+        const tbody = document.getElementById('tabela-requisicoes');
+        tbody.innerHTML = dados.length === 0 ? '<tr><td colspan="4">Nenhum registo.</td></tr>' : '';
+        dados.forEach(req => {
+            const dataFormatada = req.data_uso ? new Date(req.data_uso).toLocaleDateString('pt-PT') : '-';
+            const horario = (req.hora_inicio && req.hora_fim) ? `${req.hora_inicio.substring(0, 5)} - ${req.hora_fim.substring(0, 5)}` : '-';
+            const recurso = req.laboratorio_nome ? `${escapeHTML(req.equipamento_nome)} (${escapeHTML(req.laboratorio_nome)})` : escapeHTML(req.equipamento_nome);
+
+            let acoes = '';
+            if (req.estado === 'pendente') {
+                acoes = `
+                    <button class="btn-action" onclick="decidirRequisicao(${req.id}, 'aprovado')">Aprovar</button>
+                    <button class="btn-action" style="background:#fee2e2;color:#dc2626;" onclick="decidirRequisicao(${req.id}, 'rejeitado')">Rejeitar</button>
+                `;
+            } else if ((req.estado === 'aprovado' || req.estado === 'emprestado') && !req.hora_saida_real) {
+                acoes = `<button class="btn-action" onclick="registarSaida(${req.id})">Registar Saída</button>`;
+            } else {
+                acoes = `<span class="status-badge">${escapeHTML(req.estado)}</span>`;
+            }
+
+            tbody.innerHTML += `<tr>
+                <td>${escapeHTML(req.formador_nome)}${req.turma_nome ? ' — ' + escapeHTML(req.turma_nome) : ''}</td>
+                <td>${recurso}</td>
+                <td>${dataFormatada} | ${horario}</td>
+                <td>${acoes}</td>
+            </tr>`;
+        });
+    });
+}
+
+function decidirRequisicao(id, novoEstado) {
+    const dados = new FormData();
+    dados.append('acao', 'decidirRequisicao');
+    dados.append('emprestimo_id', id);
+    dados.append('novo_estado', novoEstado);
+
+    fetch('api.php', { method: 'POST', body: dados })
+        .then(res => res.json())
+        .then(res => { if (res.sucesso) carregarPainelCompleto(); });
+}
+
+function registarSaida(id) {
+    if (!confirm('Confirmar devolução deste equipamento agora?')) return;
+
+    const dados = new FormData();
+    dados.append('acao', 'registarSaida');
+    dados.append('emprestimo_id', id);
+
+    fetch('api.php', { method: 'POST', body: dados })
+        .then(res => res.json())
+        .then(res => { if (res.sucesso) carregarPainelCompleto(); });
 }
 
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }

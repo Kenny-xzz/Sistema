@@ -24,6 +24,44 @@
 
             padding:0 25px;
         }
+        .alerta {
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: deslizar 0.3s ease-out;
+}
+
+.alerta.erro {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+.alerta.erro::before {
+    content: "⚠️";
+    font-size: 18px;
+}
+
+.alerta.sucesso {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.alerta.sucesso::before {
+    content: "✅";
+    font-size: 18px;
+}
+
+@keyframes deslizar {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
        /* .bolinhas{
             display:flex;

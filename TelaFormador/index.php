@@ -92,6 +92,11 @@ $requisicoes = $stmtTabela->fetchAll(PDO::FETCH_ASSOC);
         <!-- ÁREA PRINCIPAL -->
         <main class="principal">
             <div class="cabecalho">
+                <?php if (isset($_GET['erro'])): ?>
+                    <div class="alerta erro"><?php echo htmlspecialchars($_GET['erro']); ?></div>
+                <?php elseif (isset($_GET['sucesso'])): ?>
+                    <div class="alerta sucesso">Requisição submetida com sucesso!</div>
+                <?php endif; ?>
                 <h1>Olá, Formador!</h1>
                 <p>Consulte equipamentos, laboratórios e acompanhe as suas requisições.</p>
             </div>
@@ -190,6 +195,7 @@ $requisicoes = $stmtTabela->fetchAll(PDO::FETCH_ASSOC);
             <span class="fechar" onclick="fecharRequisicao()">&times;</span>
             <h2>Nova Requisição</h2>
             <form action="processar_requisicao.php" method="POST">
+
                 <label>Tipo</label>
                 <select name="tipo" id="tipo">
                     <option value="Equipamento">Equipamento</option>
@@ -205,7 +211,28 @@ $requisicoes = $stmtTabela->fetchAll(PDO::FETCH_ASSOC);
                     }
                     ?>
                 </select>
+                <label>Laboratório</label>
+                <select name="laboratorio_id" id="laboratorio" required>
+                    <?php
+                    $labs = $pdo->query("SELECT id, nome FROM laboratorios")->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($labs as $lab) {
+                        echo "<option value='{$lab['id']}'>{$lab['nome']}</option>";
+                    }
+                    ?>
+                </select>
 
+                <label>Turma</label>
+                <select name="turma_id" id="turma" required>
+                    <?php
+                    $turmas = $pdo->query("SELECT id, nome FROM turmas")->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($turmas as $t) {
+                        echo "<option value='{$t['id']}'>{$t['nome']}</option>";
+                    }
+                    ?>
+                </select>
+
+                <label>Quantidade</label>
+                <input type="number" name="quantidade" id="quantidade" min="1" value="1" required>
                 <label>Data</label>
                 <input type="date" name="data_requisicao" id="dataRequisicao" required>
 

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $estudanteDAO->criar($utilizador_id, $curso, $codigo_estudante, $contacto);
         } else {
             $formadorDAO = new FormadorDAO($pdo);
-            $formadorDAO->criar($utilizador_id, $codigo, $departamento_area, $cidade, $telefone);
+            $formadorDAO->criar($utilizador_id,$nome, $codigo, $departamento_area, $cidade, $telefone);
         }
 
         $pdo->commit();

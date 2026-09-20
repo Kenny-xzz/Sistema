@@ -19,6 +19,29 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['buscar'])) {
     $busca = $_GET['buscar'];
 
 
+    if ($busca === 'requisicoes') {
+        $sql = "
+            SELECT 
+                e.id,
+                e.estado,
+                e.data_uso,
+                e.hora_inicio,
+                e.hora_fim,
+                e.hora_saida_real,
+                eq.nome AS equipamento_nome,
+                lab.nome AS laboratorio_nome,
+                t.nome AS turma_nome,
+                u.nome AS formador_nome
+            FROM emprestimos e
+            JOIN equipamentos eq ON e.equipamento_id = eq.id
+            LEFT JOIN laboratorios lab ON e.laboratorio_id = lab.id
+            LEFT JOIN turmas t ON e.turma_id = t.id
+            JOIN utilizadores u ON e.utilizador_id = u.id
+            ORDER BY e.data_pedido DESC
+        ";
+        echo json_encode($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC));
+        exit;
+    }
 
     if ($busca === 'equipamentos') {
         echo json_encode($pdo->query("SELECT * FROM equipamentos ORDER BY data_registo DESC")->fetchAll(PDO::FETCH_ASSOC));
@@ -54,6 +77,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($acao === 'atualizar_equipamento') {
             $stmt = $pdo->prepare("UPDATE equipamentos SET nome = ?, estado = ? WHERE patrimonio = ?");
             $stmt->execute([$_POST['nome'], $_POST['estado'], $_POST['patrimonio']]);
+            echo json_encode(["sucesso" => true]);
+            exit;
+        }
+                if ($acao === 'decidirRequisicao') {
+            $stmt = $pdo->prepare("UPDATE emprestimos SET estado = ? WHERE id = ?");
+            $stmt->execute([$_POST['novo_estado'], $_POST['emprestimo_id']]);
+            echo json_encode(["sucesso" => true]);
+            exit;
+        }
+
+        if ($acao === 'registarSaida') {
+            $stmt = $pdo->prepare("
+                UPDATE emprestimos
+                SET hora_saida_real = CURTIME(), estado = 'devolvido'
+                WHERE id = ? AND hora_saida_real IS NULL
+            ");
+            $stmt->execute([$_POST['emprestimo_id']]);
+            echo json_encode(["sucesso" => true]);
+            exit;
+        }
+
+        if ($acao === 'registarSaida') {
+            $stmt = $pdo->prepare("
+                UPDATE emprestimos
+                SET hora_saida_real = CURTIME(), estado = 'devolvido'
+                WHERE id = ? AND hora_saida_real IS NULL
+            ");
+            $stmt->execute([$_POST['emprestimo_id']]);
             echo json_encode(["sucesso" => true]);
             exit;
         }
