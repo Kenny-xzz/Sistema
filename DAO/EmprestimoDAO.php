@@ -31,18 +31,12 @@ class EmprestimoDAO {
     }
 
     public function criar($dados) {
-       
-    // 0. Hora de fim tem de ser depois da hora de início (impede virar o dia)
-    if ($dados['hora_fim'] <= $dados['hora_inicio']) {
-        return ['erro' => 'A hora de fim tem de ser depois da hora de início, e no mesmo dia.'];
-    }
+        $dados['hora_inicio'] = strlen($dados['hora_inicio']) === 5 ? $dados['hora_inicio'] . ':00' : $dados['hora_inicio'];
+        $dados['hora_fim'] = strlen($dados['hora_fim']) === 5 ? $dados['hora_fim'] . ':00' : $dados['hora_fim'];
 
-    // 1. Validar horário geral de funcionamento
-    if ($dados['hora_inicio'] < '07:00:00' || $dados['hora_fim'] > '21:10:00') {
-        return ['erro' => 'Fora do horário de funcionamento (07:00 - 21:10).'];
-    }
-
-    // ...resto do método continua igual
+        if ($dados['hora_fim'] <= $dados['hora_inicio']) {
+            return ['erro' => 'A hora de fim tem de ser depois da hora de início, e no mesmo dia.'];
+        }
 
         if ($dados['hora_inicio'] < '07:00:00' || $dados['hora_fim'] > '21:10:00') {
             return ['erro' => 'Fora do horário de funcionamento (07:00 - 21:10).'];
@@ -60,7 +54,7 @@ class EmprestimoDAO {
             $dados['equipamento_id'], $dados['data_uso'], $dados['hora_inicio'], $dados['hora_fim']
         );
 
-        $stmtQtd = $this->pdo->prepare("SELECT quantidade_total FROM equipamentos WHERE id = ?");
+                $stmtQtd = $this->pdo->prepare("SELECT quantidade_total FROM equipamentos WHERE id = ?");
         $stmtQtd->execute([$dados['equipamento_id']]);
         $eq = $stmtQtd->fetch(PDO::FETCH_ASSOC);
         if (!$eq) {
@@ -84,3 +78,4 @@ class EmprestimoDAO {
         return ['sucesso' => true];
     }
 }
+    

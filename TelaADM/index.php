@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['tipo'] !== 'admin') {
@@ -92,6 +91,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo'] !== 'admin') {
                     <tr>
                         <th>Património</th>
                         <th>Nome do Ativo</th>
+                        <th>Quantidade (Disp/Total)</th>
                         <th>Estado</th>
                         <th>Ações</th>
                     </tr>
@@ -167,6 +167,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo'] !== 'admin') {
                 <input type="text" name="patrimonio" id="form-eq-patrimonio" required placeholder="Ex: ITC-EQ-999">
                 <label>Designação/Nome:</label>
                 <input type="text" name="nome" id="form-eq-nome" required>
+                <label>Quantidade Total:</label>
+                <input type="number" name="quantidade_total" id="form-eq-quantidade" min="1" value="1" required>
+                <label>Laboratório Fixo (deixa em branco se for circulante):</label>
+                <select name="laboratorio_id" id="form-eq-laboratorio">
+                    <option value="">— Circulante (via requisição) —</option>
+                </select>
                 <label>Estado do Equipamento:</label>
                 <select name="estado" id="form-eq-estado">
                     <option value="disponivel">Disponível</option>

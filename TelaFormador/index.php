@@ -13,7 +13,7 @@ require '../config/db.php';
 $utilizador_id = $_SESSION['user_id'];
 
 // 1. Equipamentos Disponíveis
-$stmtDisp = $pdo->query("SELECT COUNT(*) FROM equipamentos WHERE estado = 'disponivel'");
+$stmtDisp = $pdo->query("SELECT COUNT(*) FROM equipamentos WHERE estado = 'disponivel' AND laboratorio_id IS NULL");
 $totalDisponiveis = $stmtDisp->fetchColumn();
 
 // 2. Minhas Requisições (do formador logado)
@@ -196,16 +196,15 @@ $requisicoes = $stmtTabela->fetchAll(PDO::FETCH_ASSOC);
             <h2>Nova Requisição</h2>
             <form action="processar_requisicao.php" method="POST">
 
-                <label>Tipo</label>
-                <select name="tipo" id="tipo">
-                    <option value="Equipamento">Equipamento</option>
-                    <option value="Laboratório">Laboratório</option>
-                </select>
+               
 
                 <label>Equipamento / Laboratório</label>
                 <select name="item_id" id="item">
                     <?php
-                    $itens = $pdo->query("SELECT id, nome FROM equipamentos WHERE estado = 'disponivel'")->fetchAll(PDO::FETCH_ASSOC);
+                    $itens = $pdo->query("
+        SELECT id, nome FROM equipamentos
+        WHERE estado = 'disponivel' AND laboratorio_id IS NULL
+    ")->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($itens as $it) {
                         echo "<option value='{$it['id']}'>{$it['nome']}</option>";
                     }

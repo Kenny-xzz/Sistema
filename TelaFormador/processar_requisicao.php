@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo'] !== 'formador') {
     exit;
 }
 
+
 require '../config/db.php';
 require '../DAO/EmprestimoDAO.php';
 
@@ -21,6 +22,7 @@ $dados = [
     'hora_inicio'     => $_POST['hora_inicio'],
     'hora_fim'        => $_POST['hora_fim'],
 ];
+
 
 $dao = new EmprestimoDAO($pdo);
 $resultado = $dao->criar($dados);

@@ -5,6 +5,7 @@ function carregarPainelCompleto() {
     listarEquipamentos();
     listarLaboratorios();
     listarRequisicoesEManutencoes();
+    preencherDropdownLaboratorios();
 }
 
 function switchTab(event, tabId) {
@@ -19,15 +20,16 @@ function switchTab(event, tabId) {
 function listarEquipamentos() {
     fetch('api.php?buscar=equipamentos').then(res => res.json()).then(dados => {
         const tbody = document.getElementById('tabela-equipamentos');
-        tbody.innerHTML = dados.length === 0 ? '<tr><td colspan="4">Nenhum registo.</td></tr>' : '';
+        tbody.innerHTML = dados.length === 0 ? '<tr><td colspan="5">Nenhum registo.</td></tr>' : '';
         dados.forEach(eq => {
             const labelEstado = eq.estado === 'disponivel' ? 'Disponível' : (eq.estado === 'em_uso' ? 'Em Uso' : 'Em Manutenção');
             tbody.innerHTML += `<tr>
                 <td>${escapeHTML(eq.patrimonio)}</td>
                 <td>${escapeHTML(eq.nome)}</td>
+                <td>${eq.quantidade_disponivel} / ${eq.quantidade_total}</td>
                 <td><span class="status-badge ${eq.estado}">${labelEstado}</span></td>
                 <td>
-    <button class="btn-action" onclick="openModalEquipamentoEdicao('${escapeHTML(eq.patrimonio)}','${escapeHTML(eq.nome)}','${eq.estado}')">Editar</button>
+    <button class="btn-action" onclick="openModalEquipamentoEdicao('${escapeHTML(eq.patrimonio)}','${escapeHTML(eq.nome)}','${eq.estado}',${eq.quantidade_total},${eq.laboratorio_id || 'null'})">Editar</button>
     <button class="btn-action" style="background:#fee2e2;color:#dc2626;" onclick="excluirEquipamento('${escapeHTML(eq.patrimonio)}')">Excluir</button>
 </td>
             </tr>`;
@@ -49,13 +51,15 @@ function openModalEquipamentoCadastro() {
     document.getElementById('modal-equipamento').style.display = 'flex';
 }
 
-function openModalEquipamentoEdicao(patrimonio, nome, estado) {
+function openModalEquipamentoEdicao(patrimonio, nome, estado, quantidadeTotal, laboratorioId) {
     document.getElementById('form-eq-acao').value = 'atualizar_equipamento';
     document.getElementById('modal-eq-titulo').innerText = 'Editar Equipamento';
     document.getElementById('form-eq-patrimonio').value = patrimonio;
     document.getElementById('form-eq-patrimonio').readOnly = true;
     document.getElementById('form-eq-nome').value = nome;
     document.getElementById('form-eq-estado').value = estado;
+    document.getElementById('form-eq-quantidade').value = quantidadeTotal;
+    document.getElementById('form-eq-laboratorio').value = laboratorioId || '';
     document.getElementById('modal-equipamento').style.display = 'flex';
 }
 
@@ -112,11 +116,47 @@ function atualizarContadores() {
     });
 }
 
+function preencherDropdownLaboratorios() {
+    fetch('api.php?buscar=laboratorios').then(res => res.json()).then(dados => {
+        const select = document.getElementById('form-eq-laboratorio');
+        select.innerHTML = '<option value="">— Circulante (via requisição) —</option>';
+        dados.forEach(lab => {
+            select.innerHTML += `<option value="${lab.id}">${escapeHTML(lab.nome)}</option>`;
+        });
+    });
+}
+
 function listarRequisicoesEManutencoes() {
     listarRequisicoes();
+    listarManutencoes();
+}
 
-    // Manutenções continua estática por agora
-    document.getElementById('tabela-manutencoes').innerHTML = '<tr><td>ITC-EQ-101</td><td>Troca do projetor </td><td><span class="status-badge manutencao">Em Curso</span></td></tr>';
+function listarManutencoes() {
+    fetch('api.php?buscar=avarias').then(res => res.json()).then(dados => {
+        const tbody = document.getElementById('tabela-manutencoes');
+        tbody.innerHTML = dados.length === 0 ? '<tr><td colspan="3">Nenhuma avaria reportada.</td></tr>' : '';
+        dados.forEach(av => {
+            const acoes = av.estado === 'resolvida'
+                ? '<span class="status-badge">Resolvida</span>'
+                : `<button class="btn-action" onclick="resolverAvaria(${av.id})">Marcar Resolvida</button>`;
+
+            tbody.innerHTML += `<tr>
+                <td>${escapeHTML(av.patrimonio)} — ${escapeHTML(av.equipamento_nome)}</td>
+                <td>${escapeHTML(av.descricao)}</td>
+                <td><span class="status-badge ${av.estado === 'resolvida' ? '' : 'manutencao'}">${escapeHTML(av.estado)}</span> ${acoes}</td>
+            </tr>`;
+        });
+    });
+}
+
+function resolverAvaria(id) {
+    const dados = new FormData();
+    dados.append('acao', 'resolverAvaria');
+    dados.append('avaria_id', id);
+
+    fetch('api.php', { method: 'POST', body: dados })
+        .then(res => res.json())
+        .then(res => { if (res.sucesso) carregarPainelCompleto(); });
 }
 
 function listarRequisicoes() {
